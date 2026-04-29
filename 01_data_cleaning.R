@@ -2,7 +2,7 @@
 
 library(tidyverse)
 
-anes_2024 <- read.csv("anes_timeseries_2024.csv")
+anes_2024 <- read.csv("data/ANES2024.csv")
 
 anes_2024_subset <- anes_2024 |>
   transmute(
