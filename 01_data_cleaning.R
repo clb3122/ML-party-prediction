@@ -1,6 +1,7 @@
-# Load and clean data
+# LOAD, CLEAN, AND IMPUTE DATA
 
 library(tidyverse)
+library(mice)
 
 anes_2024 <- read.csv("data/ANES2024.csv")
 
@@ -32,12 +33,12 @@ anes_2024_subset <- anes_2024 |>
       TRUE ~ NA_character_),
     
     race = case_when(
-      V241501x == 1 ~ "White NH",
-      V241501x == 2 ~ "Black NH",
+      V241501x == 1 ~ "White",
+      V241501x == 2 ~ "Black",
       V241501x == 3 ~ "Hispanic",
-      V241501x == 4 ~ "Asian/Pacific Islander NH",
-      V241501x == 5 ~ "Native American/Other NH",
-      V241501x == 6 ~ "Multiracial NH",
+      V241501x == 4 ~ "Asian/Pacific Islander",
+      V241501x == 5 ~ "Native/Other",
+      V241501x == 6 ~ "Multiracial",
       TRUE ~ NA_character_),
     
     birthplace = case_when(
@@ -47,7 +48,7 @@ anes_2024_subset <- anes_2024 |>
       V241507 == 4 ~ "Other country",
       TRUE ~ NA_character_),
     
-    marital_status_summary = case_when(
+    marital_status = case_when(
       V241461x == 1 ~ "Married",
       V241461x == 2 ~ "Widowed",
       V241461x == 3 ~ "Divorced",
@@ -93,16 +94,6 @@ anes_2024_subset <- anes_2024 |>
     
     occupation = case_when(
       V241488x == 1 ~ "Working",
-      V241488x == 2 ~ "Temporarily laid off",
-      V241488x == 4 ~ "Unemployed",
-      V241488x == 5 ~ "Retired",
-      V241488x == 6 ~ "Permanently disabled",
-      V241488x == 7 ~ "Homemaker",
-      V241488x == 8 ~ "Student",
-      TRUE ~ NA_character_),
-    
-    occupation_3 = case_when(
-      V241488x == 1 ~ "Working",
       V241488x %in% c(2, 4) ~ "Unemployed",
       V241488x %in% c(5, 6, 7, 8) ~ "Not working",
       TRUE ~ NA_character_),
@@ -118,15 +109,15 @@ anes_2024_subset <- anes_2024 |>
       V241470 == 3 ~ "Never served",
       TRUE ~ NA_character_),
     
-    urban_rural_identity = case_when(
+    urban_rural = case_when(
       V242341 == 1 ~ "Urban",
       V242341 == 2 ~ "Suburban",
       V242341 == 3 ~ "Small town",
       V242341 == 4 ~ "Rural",
       V242341 == 5 ~ "Other",
       TRUE ~ NA_character_),
-    urban_rural_identity = factor(
-      urban_rural_identity,
+    urban_rural = factor(
+      urban_rural,
       levels = c("Urban", "Suburban", "Small town", "Rural", "Other")),
     
     religion = case_when(
@@ -157,20 +148,12 @@ anes_2024_subset <- anes_2024 |>
         "Every week"),
       ordered = TRUE),
     
-    # PARTY AND IDEOLOGY
-    
-    party_registration = case_when(
-      V241025 == 1 ~ "Democrat",
-      V241025 == 2 ~ "Republican",
-      V241025 == 4 ~ "None/Independent",
-      V241025 == 5 ~ "Other",
-      TRUE ~ NA_character_),
+    # PARTY AFFILIATION
     
     party_id_3 = case_when(
       V241221 == 1 ~ "Democrat",
       V241221 == 2 ~ "Republican",
       V241221 == 3 ~ "Independent",
-      V241221 == 0 ~ "No preference",
       TRUE ~ NA_character_),
     
     party_id_7 = case_when(
@@ -194,22 +177,8 @@ anes_2024_subset <- anes_2024 |>
         "Weak Republican",
         "Strong Republican"),
       ordered = TRUE),
-    
-    ideology_7 = case_when(
-      V241177 %in% 1:7 ~ as.numeric(V241177),
-      TRUE ~ NA_real_),
-    # ideology_7: 1 = Extremely liberal ... 4 = Moderate ... 7 = Extremely conservative
-    
-    ideology_3 = case_when(
-      ideology_7 %in% 1:3 ~ "Liberal",
-      ideology_7 == 4 ~ "Moderate",
-      ideology_7 %in% 5:7 ~ "Conservative",
-      TRUE ~ NA_character_),
-    
-    ideology_forced_2 = case_when(
-      V241178 == 1 ~ "Liberal",
-      V241178 == 2 ~ "Conservative",
-      TRUE ~ NA_character_),
+
+    guns_in_household = case_when(V241583 >= 0 ~ as.numeric(V241583), TRUE ~ NA_real_),
     
     # ISSUE OPINIONS
     
@@ -229,12 +198,6 @@ anes_2024_subset <- anes_2024 |>
       V241232 == 3 ~ "Waste very little",
       TRUE ~ NA_character_),
     
-    biden_handle_economy = case_when(V241143x > 0 ~ as.numeric(V241143x), TRUE ~ NA_real_),
-    biden_handle_foreign_relations = case_when(V241146x > 0 ~ as.numeric(V241146x), TRUE ~ NA_real_),
-    biden_handle_abortion = case_when(V241149x > 0 ~ as.numeric(V241149x), TRUE ~ NA_real_),
-    biden_handle_immigration = case_when(V241152x > 0 ~ as.numeric(V241152x), TRUE ~ NA_real_),
-    biden_handle_crime = case_when(V241155x > 0 ~ as.numeric(V241155x), TRUE ~ NA_real_),
-    
     spend_services_7 = case_when(V241239 %in% 1:7 ~ as.numeric(V241239), TRUE ~ NA_real_),
     # spend_services_7: 1 = Fewer services ... 7 = More services
     
@@ -250,11 +213,8 @@ anes_2024_subset <- anes_2024 |>
     job_income_7 = case_when(V241252 %in% 1:7 ~ as.numeric(V241252), TRUE ~ NA_real_),
     # job_income_7: 1 = Gov should see to jobs/standard of living ... 7 = People get ahead on own
     
-    assist_blacks_7 = case_when(V241255 %in% 1:7 ~ as.numeric(V241255), TRUE ~ NA_real_),
-    # assist_blacks_7: 1 = Gov should help blacks ... 7 = Blacks should help themselves
-    
-    harris_env_business_7 = case_when(V241259 %in% 1:7 ~ as.numeric(V241259), TRUE ~ NA_real_),
-    # harris_env_business_7: 1 = Tougher regulations ... 7 = Regulations already too burdensome
+    assist_black_7 = case_when(V241255 %in% 1:7 ~ as.numeric(V241255), TRUE ~ NA_real_),
+    # assist_black_7: 1 = Gov should help Black Americans ... 7 = Black Americans should help themselves
     
     fedspend_social_security_5 = case_when(V241263x %in% 1:5 ~ as.numeric(V241263x), TRUE ~ NA_real_),
     fedspend_public_schools_5 = case_when(V241266x %in% 1:5 ~ as.numeric(V241266x), TRUE ~ NA_real_),
@@ -263,26 +223,10 @@ anes_2024_subset <- anes_2024 |>
     fedspend_highways_5 = case_when(V241278x %in% 1:5 ~ as.numeric(V241278x), TRUE ~ NA_real_),
     fedspend_aid_poor_5 = case_when(V241281x %in% 1:5 ~ as.numeric(V241281x), TRUE ~ NA_real_),
     fedspend_environment_5 = case_when(V241284x %in% 1:5 ~ as.numeric(V241284x), TRUE ~ NA_real_),
-    # fedspend_*_5: 1 = Increased a lot ... 3 = Kept same ... 5 = Decreased a lot
+    # fedspend_x_5: 1 = Increased a lot ... 3 = Kept same ... 5 = Decreased a lot
     
     dei_7 = case_when(V241290x %in% 1:7 ~ as.numeric(V241290x), TRUE ~ NA_real_),
     # dei_7: 1 = Favor a great deal ... 4 = Neither ... 7 = Oppose a great deal
-    
-    econ_last_year_5 = case_when(V241294x %in% 1:5 ~ as.numeric(V241294x), TRUE ~ NA_real_),
-    # econ_last_year_5: 1 = Gotten much better ... 3 = Same ... 5 = Gotten much worse
-    
-    econ_next_year_3 = case_when(
-      V241295 == 1 ~ "Better",
-      V241295 == 2 ~ "Same",
-      V241295 == 3 ~ "Worse",
-      TRUE ~ NA_character_),
-    
-    abortion_std_4 = case_when(
-      V241302 == 1 ~ "Never permitted",
-      V241302 == 2 ~ "Only rape/incest/life danger",
-      V241302 == 3 ~ "Only with established need",
-      V241302 == 4 ~ "Always personal choice",
-      TRUE ~ NA_character_),
     
     death_penalty_4 = case_when(V241308x %in% 1:4 ~ as.numeric(V241308x), TRUE ~ NA_real_),
     # death_penalty_4: 1 = Favor strongly ... 4 = Oppose strongly
@@ -321,14 +265,42 @@ anes_2024_subset <- anes_2024 |>
     
     ukraine_aid_7 = case_when(V241400x %in% 1:7 ~ as.numeric(V241400x), TRUE ~ NA_real_),
     israel_aid_7 = case_when(V241403x %in% 1:7 ~ as.numeric(V241403x), TRUE ~ NA_real_),
-    palestinians_aid_7 = case_when(V241406x %in% 1:7 ~ as.numeric(V241406x), TRUE ~ NA_real_),
+    palestinians_aid_7 = case_when(V241406x %in% 1:7 ~ as.numeric(V241406x), TRUE ~ NA_real_)
     
-    guns_in_household = case_when(V241583 >= 0 ~ as.numeric(V241583), TRUE ~ NA_real_),
-    
-    interviewer_honesty_3 = case_when(
-      V241643 == 1 ~ "Completely honest",
-      V241643 == 2 ~ "Usually honest",
-      V241643 == 3 ~ "Often seemed dishonest",
-      TRUE ~ NA_character_)
   )
 
+# IMPUTATION PREP 
+anes_2024_impdata <- anes_2024_subset |>
+  mutate(
+    across(where(is.character), as.factor),
+
+    party_id_3 = factor(party_id_3),
+    party_id_7 = factor(party_id_7, ordered = TRUE),
+
+    gender = factor(gender),
+    is_transgender = factor(is_transgender),
+    sexual_orientation = factor(sexual_orientation),
+    race = factor(race),
+    birthplace = factor(birthplace),
+    marital_status = factor(marital_status),
+    home_tenure = factor(home_tenure),
+    occupation = factor(occupation),
+    union_status = factor(union_status),
+    military = factor(military),
+    urban_rural = factor(urban_rural),
+    religion = factor(religion),
+    religious_attendance = factor(religious_attendance, ordered = TRUE)
+  ) |>
+  filter(!is.na(party_id_3) | !is.na(party_id_7))
+
+# MULTIPLE IMPUTATION
+set.seed(123)
+
+imp <- mice(
+  data = anes_2024_impdata,
+  m = 5,
+  maxit = 10,
+  printFlag = TRUE
+)
+
+anes_list <- lapply(1:imp$m, function(i) complete(imp, i)) # use this variable for modeling!
