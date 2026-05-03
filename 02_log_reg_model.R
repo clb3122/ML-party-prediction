@@ -1,6 +1,6 @@
 fit_party_logistic <- function(predictors, data, label = "") {
   dat <- data |>
-    filter(party_id_3 %in% c("Democrat", "Independent", "Republican")) |>
+    filter(party_id_3 %in% c("Democrat", "Republican")) |>
     mutate(party_id_3 = droplevels(factor(party_id_3))) |>
     select(party_id_3, any_of(predictors)) |>
     drop_na()
@@ -22,9 +22,6 @@ fit_party_logistic <- function(predictors, data, label = "") {
   invisible(list(fit = fit, err = err))
 }
 
-# logreg with independents
-demo_logistic <- fit_party_logistic(demo_vars,  data = anes_model_data, label = "DEMO")
-issue_logistic <- fit_party_logistic(issue_vars, data = anes_model_data, label = "ISSUE")
-# logreg without independents
+# logreg can only be done without independents
 demo_logistic_2party <- fit_party_logistic(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
 issue_logistic_2party <- fit_party_logistic(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
