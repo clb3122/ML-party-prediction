@@ -308,3 +308,7 @@ anes_list <- lapply(1:imp$m, function(i) complete(imp, i))
 # Randomly select ONE imputation for simplicity
 imp_pick <- sample(seq_along(anes_list), 1)
 anes_model_data <- anes_list[[imp_pick]] # use this variable for modeling!
+
+
+demo_vars  <- c("age", "gender", "is_transgender", "sexual_orientation", "race", "birthplace", "marital_status", "education", "hh_income", "home_tenure", "occupation", "union_status", "military", "guns_in_household", "urban_rural", "religion", "religious_attendance")
+issue_vars <- c("voting_duty_choice_7", "gov_run_by", "gov_waste_3", "spend_services_7", "defense_spend_7", "health_insurance_7", "abortion_7", "job_income_7", "assist_black_7", "fedspend_social_security_5", "fedspend_public_schools_5", "fedspend_border_security_5", "fedspend_crime_5", "fedspend_highways_5", "fedspend_aid_poor_5", "fedspend_environment_5", "dei_7", "death_penalty_4", "stay_out_foreign_4", "use_force_5", "votes_counted_5", "voter_id_7", "felons_vote_7", "climate_action_7", "paid_leave_7", "trans_bathroom_7", "trans_sports_7", "gay_job_protect_4", "gay_adoption_6", "gay_marriage_7", "birthright_7", "immig_children_6", "border_wall_7", "urban_unrest_7", "ukraine_aid_7", "israel_aid_7", "palestinians_aid_7")
