@@ -303,4 +303,8 @@ imp <- mice(
   printFlag = TRUE
 )
 
-anes_list <- lapply(1:imp$m, function(i) complete(imp, i)) # use this variable for modeling!
+anes_list <- lapply(1:imp$m, function(i) complete(imp, i)) 
+
+# Randomly select ONE imputation for simplicity
+imp_pick <- sample(seq_along(anes_list), 1)
+anes_model_data <- anes_list[[imp_pick]] # use this variable for modeling!
