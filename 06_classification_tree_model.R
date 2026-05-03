@@ -3,8 +3,8 @@ library(tree)
 
 set.seed(123)
 
-fit_party_tree <- function(predictors, label = "") {
-    dat <- anes_model_data |>
+fit_party_tree <- function(predictors, data, label = "") {
+    dat <- data |>
         filter(party_id_3 %in% c("Democrat", "Independent", "Republican")) |>
         mutate(party_id_3 = droplevels(factor(party_id_3))) |>
         select(party_id_3, any_of(predictors))
@@ -49,5 +49,10 @@ fit_party_tree <- function(predictors, label = "") {
                    train_err = train_err, test_err = test_err, pruned_err = pruned_err))
 }
 
-demo_trees <- fit_party_tree(demo_vars,  label = "DEMO")
-issue_trees <- fit_party_tree(issue_vars, label = "ISSUE")
+# with independents
+demo_trees  <- fit_party_tree(demo_vars,  data = anes_model_data, label = "DEMO")
+issue_trees <- fit_party_tree(issue_vars, data = anes_model_data, label = "ISSUE")
+
+# without independents
+demo_trees_2party  <- fit_party_tree(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
+issue_trees_2party <- fit_party_tree(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
