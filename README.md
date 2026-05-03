@@ -16,5 +16,6 @@ gun ownership, urban/rural identity, religion, religious attendance.
 **Issue opinions** (37 variables): Respondants opinions about government and democracy, economic policy, social and cultural issues, criminal justice, immigration, and foriegn policy.
 
 ## Notes
+- For more detailed information about the dataset or variables, please refer to the [codebook](https://electionstudies.org/wp-content/uploads/2025/08/anes_timeseries_2024_userguidecodebook_20250808.pdf).
 - Survey weights are not applied. These results describe the sample, not the general electorate.
 - `set.seed(123)` is used for reproducibility.
