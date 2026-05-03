@@ -3,8 +3,8 @@ library(class)
 
 set.seed(123)
 
-fit_party_knn <- function(predictors, label = "", k_max = 20) {
-  dat <- anes_model_data |>
+fit_party_knn <- function(predictors, data, label = "", k_max = 20) {
+  dat <- data |>
     filter(party_id_3 %in% c("Democrat", "Independent", "Republican")) |>
     mutate(party_id_3 = droplevels(factor(party_id_3))) |>
     select(party_id_3, any_of(predictors)) |>
@@ -15,9 +15,9 @@ fit_party_knn <- function(predictors, label = "", k_max = 20) {
   n <- nrow(X)
   Z <- sample(n, n / 2)
   X.training <- X[Z, ]
-  X.testing  <- X[-Z, ]
+  X.testing <- X[-Z, ]
   Y.training <- Y[Z]
-  Y.testing  <- Y[-Z]
+  Y.testing <- Y[-Z]
   # find optimal K
   class.rate <- rep(0, k_max)
   for (K in 1:k_max) {
@@ -41,5 +41,9 @@ fit_party_knn <- function(predictors, label = "", k_max = 20) {
   invisible(list(class.rate = class.rate, best_k = best_k, best_rate = best_rate))
 }
 
-demo_knn  <- fit_party_knn(demo_vars,  label = "DEMO")
-issue_knn <- fit_party_knn(issue_vars, label = "ISSUE")
+demo_knn  <- fit_party_knn(demo_vars,  data = anes_model_data, label = "DEMO") # Demo KNN with Ind voters
+issue_knn <- fit_party_knn(issue_vars, data = anes_model_data, label = "ISSUE") # Issue KNN with Ind voters
+
+# without independents
+demo_knn_2party  <- fit_party_knn(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
+issue_knn_2party <- fit_party_knn(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
