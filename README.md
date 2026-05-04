@@ -22,5 +22,6 @@ gun ownership, urban/rural identity, religion, religious attendance.
 
 ## Contributions
 **Graham**: variable selection, lasso model, and ridge regression model.
+
 **Collin**: data cleaning, multiple imputation, logistic regression, KNN, and tree models.
 
