@@ -20,7 +20,7 @@ fit_party_lasso <- function(predictors, data, label = "") {
   # Plot lambdas against standard deviation
   plot(CV$lambda, CV$cvsd,
        xlab = "lambda", ylab = "CV Standard Deviation",
-       main = paste(label, "- KNN accuracy by K"))
+       main = paste(label, "- LASSO accuracy by lamda"))
   abline(v = best.lambda, lty = 2, col = "red")
   # Predictions (on training data)
   pred.class <- predict(cvfit, newx = X, s = best.lambda, type = "class")
