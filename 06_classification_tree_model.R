@@ -54,5 +54,5 @@ demo_trees  <- fit_party_tree(demo_vars,  data = anes_model_data, label = "DEMO"
 issue_trees <- fit_party_tree(issue_vars, data = anes_model_data, label = "ISSUE")
 
 # without independents
-demo_trees_2party  <- fit_party_tree(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
-issue_trees_2party <- fit_party_tree(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
+demo_trees_2party  <- fit_party_tree(demo_vars,  data = anes_data_2party, label = "DEMO 2-party")
+issue_trees_2party <- fit_party_tree(issue_vars, data = anes_data_2party, label = "ISSUE 2-party")
