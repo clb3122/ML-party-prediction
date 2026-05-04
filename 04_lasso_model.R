@@ -27,10 +27,7 @@ fit_party_lasso <- function(predictors, data, label = "") {
   pred.class <- as.vector(pred.class)
   # Confusion matrix
   conf.mat <- table(Predicted = pred.class, Actual = Y)
-  # Training error
-  error.rate <- mean(pred.class != Y)
-  accuracy   <- 1 - error.rate
-  # Cross-validated error (preferred)
+  # Cross-validated error
   cv.error <- cvfit$cvm[which(cvfit$lambda == best.lambda)]
   # Final model refit at best lambda
   final.model <- glmnet(
@@ -58,7 +55,6 @@ fit_party_lasso <- function(predictors, data, label = "") {
     cvfit = cvfit,
     best.lambda = best.lambda,
     confusion.matrix = conf.mat,
-    training.error = error.rate,
     cv.error = cv.error
   ))
 }
