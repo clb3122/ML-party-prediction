@@ -45,5 +45,5 @@ demo_knn  <- fit_party_knn(demo_vars,  data = anes_model_data, label = "DEMO") #
 issue_knn <- fit_party_knn(issue_vars, data = anes_model_data, label = "ISSUE") # Issue KNN with Ind voters
 
 # without independents
-demo_knn_2party  <- fit_party_knn(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
-issue_knn_2party <- fit_party_knn(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
+demo_knn_2party  <- fit_party_knn(demo_vars,  data = anes_data_2party, label = "DEMO 2-party")
+issue_knn_2party <- fit_party_knn(issue_vars, data = anes_data_2party, label = "ISSUE 2-party")
