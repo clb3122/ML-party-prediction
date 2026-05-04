@@ -45,6 +45,15 @@ fit_party_ridge <- function(predictors, data, label = "") {
   cat("Training Misclassification:", round(error.rate, 4), "\n")
   cat("CV Misclassification:", round(cv.error, 4), "\n")
   print(conf.mat)
+  cat("\n\nLargest Coefficients:\n")
+  coef_list <- coef(final.model)
+  for (cls in names(coef_list)) {
+    cat("\nClass:", cls, "\n")
+    coefs <- as.matrix(coef_list[[cls]])
+    coefs <- coefs[rownames(coefs) != "(Intercept)", , drop = FALSE]
+    top <- head(coefs[order(abs(coefs[,1]), decreasing = TRUE), , drop = FALSE], 10)
+    print(top)
+  }
   invisible(list(
     model = final.model,
     cvfit = cvfit,
@@ -55,6 +64,7 @@ fit_party_ridge <- function(predictors, data, label = "") {
   ))
 }
 
+issue_ridge <- fit_party_ridge(issue_vars, data = anes_model_data, label = "ISSUE") # Issue Ridge Regression with Ind voters
 issue_ridge <- fit_party_ridge(issue_vars, data = anes_model_data, label = "ISSUE") # Issue Ridge Regression with Ind voters
 
 # without independents
