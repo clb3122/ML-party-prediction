@@ -23,5 +23,5 @@ fit_party_logistic <- function(predictors, data, label = "") {
 }
 
 # logreg can only be done without independents
-demo_logistic_2party <- fit_party_logistic(demo_vars,  data = anes_model_data_2party, label = "DEMO 2-party")
-issue_logistic_2party <- fit_party_logistic(issue_vars, data = anes_model_data_2party, label = "ISSUE 2-party")
+demo_logistic_2party <- fit_party_logistic(demo_vars,  data = anes_data_2party, label = "DEMO 2-party")
+issue_logistic_2party <- fit_party_logistic(issue_vars, data = anes_data_2party, label = "ISSUE 2-party")
