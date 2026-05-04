@@ -43,7 +43,7 @@ fit_party_ridge <- function(predictors, data, label = "") {
   cat("Optimal lambda:", best.lambda, "\n")
   cat("Training Accuracy:", round(accuracy, 4), "\n")
   cat("Training Misclassification:", round(error.rate, 4), "\n")
-  cat("CV Misclassification:", round(cv.error, 4), "\n\n")
+  cat("CV Misclassification:", round(cv.error, 4), "\n")
   print(conf.mat)
   invisible(list(
     model = final.model,
