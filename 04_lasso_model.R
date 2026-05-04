@@ -43,8 +43,17 @@ fit_party_lasso <- function(predictors, data, label = "") {
   cat("Optimal lambda:", best.lambda, "\n")
   cat("Training Accuracy:", round(accuracy, 4), "\n")
   cat("Training Misclassification:", round(error.rate, 4), "\n")
-  cat("CV Misclassification:", round(cv.error, 4), "\n")
+  cat("CV Misclassification:", round(cv.error, 4), "\n\n")
   print(conf.mat)
+  cat("\n\nLargest Coefficients:\n")
+  coef_list <- coef(final.model)
+  for (cls in names(coef_list)) {
+    cat("\nClass:", cls, "\n")
+    coefs <- as.matrix(coef_list[[cls]])
+    coefs <- coefs[rownames(coefs) != "(Intercept)", , drop = FALSE]
+    top <- head(coefs[order(abs(coefs[,1]), decreasing = TRUE), , drop = FALSE], 10)
+    print(top)
+  }
   invisible(list(
     model = final.model,
     cvfit = cvfit,
